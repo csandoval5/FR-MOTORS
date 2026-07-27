@@ -135,12 +135,12 @@ export default function ProductosPage() {
 
   const categoriaOptions = categorias.map(c => ({ value: c.id_categoria, label: c.nombre_categoria }))
 
-  return (
+return (
     <div className="space-y-4">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-gray-900">Inventario</h2>
+          <h1 className="text-2xl font-bold text-gray-900">Inventario</h1>
           <p className="text-sm text-gray-500">{total} productos registrados</p>
         </div>
         <Button icon={Plus} onClick={openCreate}>

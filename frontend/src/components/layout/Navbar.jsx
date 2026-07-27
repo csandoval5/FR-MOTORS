@@ -60,8 +60,8 @@ export default function Navbar({ onMenuToggle }) {
   }
 
   return (
-    <header className="h-16 bg-white border-b border-gray-200 shadow-sm">
-      <div className="h-full px-4 sm:px-6 flex items-center justify-between gap-4">
+    <header className="bg-white border-b border-gray-200 px-4 sm:px-6 py-2">
+      <div className="h-full flex items-center justify-between gap-4">
         {/* Left side */}
         <div className="flex items-center gap-3">
           <button

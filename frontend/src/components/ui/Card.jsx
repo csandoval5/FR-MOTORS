@@ -33,7 +33,7 @@ export default function Card({
     >
       {/* Header */}
       {(title || Icon || action) && (
-        <div className="px-6 py-4 border-b border-gray-100">
+        <div className="px-4 py-3 border-b border-gray-100">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 min-w-0">
               {Icon && (
@@ -61,14 +61,14 @@ export default function Card({
 
       {/* Body */}
       {children && (
-        <div className="px-6 py-4">
+        <div className="px-4 py-3">
           {children}
         </div>
       )}
 
       {/* Footer */}
       {footer && (
-        <div className="px-6 py-3 border-t border-gray-100 bg-gray-50/50 rounded-b-xl">
+        <div className="px-4 py-2 border-t border-gray-100 bg-gray-50/50 rounded-b-xl">
           {footer}
         </div>
       )}

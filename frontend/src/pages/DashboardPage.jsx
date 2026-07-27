@@ -91,9 +91,9 @@ export default function DashboardPage() {
   )
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-gray-900">
             Bienvenido, {user?.nombres}
@@ -107,7 +107,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {statsCards.map((stat) => {
           const Icon = stat.icon
           return (
@@ -129,7 +129,7 @@ export default function DashboardPage() {
 
       {/* Quick Actions */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <h3 className="text-base font-semibold text-gray-900 mb-2">
           Acceso Rápido
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -164,12 +164,12 @@ export default function DashboardPage() {
             Dashboard Analítico
           </h3>
         </div>
-        <div className="bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 p-12 text-center">
-          <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500 font-medium">
+        <div className="bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 p-6 text-center">
+          <Calendar className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+          <p className="text-sm text-gray-500 font-medium">
             Los gráficos de ingresos semanales, anuales y top productos se mostrarán aquí
           </p>
-          <p className="text-sm text-gray-400 mt-2">
+          <p className="text-xs text-gray-400 mt-1">
             Módulo disponible en la Fase 3 del proyecto
           </p>
         </div>
