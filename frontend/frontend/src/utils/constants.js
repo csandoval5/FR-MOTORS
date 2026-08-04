@@ -59,9 +59,6 @@ export const METODOS_PAGO = [
 // === IVA ECUADOR ===
 export const IVA_PORCENTAJE = 15 // 15% en Ecuador
 
-// === UNIDADES DE MEDIDA PARA PRODUCTOS ===
-export const UNIDADES_MEDIDA = ['UNIDAD', 'PAR', 'JUEGO', 'KIT']
-
 // === LÍMITES Y UMBRALES ===
 export const LIMITES = {
   STOCK_MINIMO_POR_DEFECTO: 5,

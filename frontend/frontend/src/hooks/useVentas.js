@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { getVentas, getVentaById, createVenta, anularVenta, getVentasDelDia, getMetodosPago, generarNumeroFactura } from '../api/ventasService'
+import { getVentas, getVentaById, createVenta, anularVenta, getVentasDelDia, getMetodosPago } from '../api/ventasService'
 
 /**
  * Hook personalizado para gestión de ventas/POS
@@ -71,11 +71,11 @@ export function useVentas() {
     }
   }, [])
 
-const registrarVenta = useCallback(async (ventaData, session) => {
+  const registrarVenta = useCallback(async (ventaData) => {
     setLoading(true)
     setError(null)
     try {
-      const result = await createVenta({ ...ventaData, session })
+      const result = await createVenta(ventaData)
       await fetchVentas()
       await fetchVentasDelDia()
       return result
@@ -86,15 +86,6 @@ const registrarVenta = useCallback(async (ventaData, session) => {
       setLoading(false)
     }
   }, [fetchVentas, fetchVentasDelDia])
-
-  const obtenerNumeroFactura = useCallback(async () => {
-    try {
-      return await generarNumeroFactura()
-    } catch (err) {
-      console.error('Error al generar número de factura:', err)
-      return `FAC-${Date.now()}`
-    }
-  }, [])
 
   const anular = useCallback(async (id) => {
     setLoading(true)
@@ -126,10 +117,9 @@ const registrarVenta = useCallback(async (ventaData, session) => {
     setSearch,
     setFechaDesde,
     setFechaHasta,
-fetchVentas,
+    fetchVentas,
     getVenta,
     registrarVenta,
-    obtenerNumeroFactura,
     anular
   }
 }

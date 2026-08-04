@@ -79,7 +79,7 @@ export const getOrdenTallerById = async (id) => {
     .select(`
       *,
       productos!inner (
-        sku,
+        codigo_sku,
         nombre_producto
       )
     `)

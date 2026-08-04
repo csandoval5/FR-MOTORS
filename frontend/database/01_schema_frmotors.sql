@@ -98,7 +98,7 @@ CREATE TABLE proveedores (
 CREATE TABLE productos (
     id_producto SERIAL PRIMARY KEY,
     id_categoria INT NOT NULL REFERENCES categorias(id_categoria) ON DELETE RESTRICT,
-    sku VARCHAR(50) NOT NULL UNIQUE,
+    codigo_sku VARCHAR(50) NOT NULL UNIQUE,
     codigo_barras VARCHAR(100),
     nombre_producto VARCHAR(200) NOT NULL,
     descripcion TEXT,
@@ -113,8 +113,6 @@ CREATE TABLE productos (
     stock_minimo INT NOT NULL DEFAULT 5 CHECK (stock_minimo >= 0),
     stock_maximo INT DEFAULT 100 CHECK (stock_maximo >= 0),
     ubicacion_almacen VARCHAR(50),
-    unidad_medida VARCHAR(20) DEFAULT 'UNIDAD' NOT NULL,
-    id_proveedor INT REFERENCES proveedores(id_proveedor) ON DELETE SET NULL,
     activo BOOLEAN DEFAULT TRUE,
     imagen_url TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -283,7 +281,7 @@ CREATE TABLE movimientos_caja (
 -- ============================================================
 
 -- Índices para búsqueda rápida de productos
-CREATE INDEX idx_productos_sku ON productos(sku);
+CREATE INDEX idx_productos_codigo_sku ON productos(codigo_sku);
 CREATE INDEX idx_productos_codigo_barras ON productos(codigo_barras) WHERE codigo_barras IS NOT NULL;
 CREATE INDEX idx_productos_nombre ON productos USING gin(to_tsvector('spanish', nombre_producto));
 CREATE INDEX idx_productos_id_categoria ON productos(id_categoria);
@@ -463,7 +461,7 @@ CREATE TRIGGER trg_crear_cuenta_pagar_compra
 CREATE VIEW vista_productos_stock_bajo AS
 SELECT
     p.id_producto,
-    p.sku,
+    p.codigo_sku,
     p.nombre_producto,
     c.nombre_categoria,
     p.stock_actual,
@@ -494,7 +492,7 @@ GROUP BY DATE(fecha_venta);
 CREATE VIEW vista_top_productos AS
 SELECT
     p.id_producto,
-    p.sku,
+    p.codigo_sku,
     p.nombre_producto,
     c.nombre_categoria,
     SUM(dv.cantidad) AS total_unidades_vendidas,
@@ -506,7 +504,7 @@ JOIN categorias c ON p.id_categoria = c.id_categoria
 JOIN ventas v ON dv.id_venta = v.id_venta
 WHERE v.estado = 'COMPLETADA'
   AND v.fecha_venta >= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '3 months')
-GROUP BY p.id_producto, p.sku, p.nombre_producto, c.nombre_categoria
+GROUP BY p.id_producto, p.codigo_sku, p.nombre_producto, c.nombre_categoria
 ORDER BY total_unidades_vendidas DESC
 LIMIT 10;
 
