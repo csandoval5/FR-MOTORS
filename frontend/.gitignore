@@ -1,0 +1,27 @@
+# Dependencias
+node_modules/
+package-lock.json
+
+# Build de producción
+dist/
+
+# Archivos de caché
+.vite/
+.cache/
+
+# Variables de entorno (¡IMPORTANTE! Nunca subas tus claves)
+.env
+.env.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor
+.vscode/
+.idea/
+
+# Sistema operativo
+Thumbs.db
+.DS_Store
