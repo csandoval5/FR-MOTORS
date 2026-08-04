@@ -6,8 +6,10 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   # 👈 habilita escritura en la rama gh-pages
     steps:
       - name: Checkout
         uses: actions/checkout@v3
