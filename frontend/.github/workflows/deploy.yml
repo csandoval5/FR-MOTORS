@@ -1,4 +1,3 @@
-# Ajuste de variables Supabase
 name: Deploy to GitHub Pages
 
 on:
@@ -28,8 +27,8 @@ jobs:
         run: npm run build
         working-directory: frontend
         env:
-          VITE_SUPABASE_URL: https://ysrqoncccyidmjmbhhgu.supabase.co
-          VITE_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlzcnFvbmNjY3lpZG1qbWJoaGd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxNTg4NzUsImV4cCI6MjEwMDczNDg3NX0.yFPYAAMPaVFelr4PKgdEGyth15wVTOEhivu1CQ3aeag
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
