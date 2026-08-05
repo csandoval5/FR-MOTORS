@@ -1,8 +1,16 @@
 import { useState, useEffect, useCallback } from 'react'
-import { getProveedores, getProveedorById, createProveedor, updateProveedor, deleteProveedor, getTiposIdentificacion, getCuentasPagar, createAbono } from '../api/proveedoresService'
+import {
+  getProveedores,
+  getProveedorById,
+  createProveedor,
+  updateProveedor,
+  deleteProveedor,
+  verificarRucExistente
+} from '../api/proveedoresService'
 
 /**
- * Hook personalizado para gestión de proveedores y cuentas por pagar
+ * Hook personalizado para gestión de proveedores
+ * CRUD completo con búsqueda, paginación y manejo de estados
  */
 export function useProveedores() {
   const [proveedores, setProveedores] = useState([])
@@ -11,11 +19,6 @@ export function useProveedores() {
   const [error, setError] = useState(null)
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
-  const [tiposIdentificacion, setTiposIdentificacion] = useState([])
-  // Cuentas por pagar
-  const [cuentasPagar, setCuentasPagar] = useState([])
-  const [cuentasTotal, setCuentasTotal] = useState(0)
-  const [filtroEstado, setFiltroEstado] = useState('')
   const pageSize = 20
 
   const fetchProveedores = useCallback(async () => {
@@ -24,7 +27,7 @@ export function useProveedores() {
     try {
       const result = await getProveedores({ search, page, pageSize })
       setProveedores(result.data)
-      setTotal(result.total)
+      setTotal(result.total || 0)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -32,32 +35,9 @@ export function useProveedores() {
     }
   }, [search, page])
 
-  const fetchCuentasPagar = useCallback(async () => {
-    try {
-      const result = await getCuentasPagar({ estado: filtroEstado, page, pageSize })
-      setCuentasPagar(result.data)
-      setCuentasTotal(result.total)
-    } catch (err) {
-      console.error('Error al cargar cuentas por pagar:', err)
-    }
-  }, [filtroEstado, page])
-
-  const fetchTiposIdentificacion = useCallback(async () => {
-    try {
-      const data = await getTiposIdentificacion()
-      setTiposIdentificacion(data || [])
-    } catch (err) {
-      console.error('Error al cargar tipos identificación:', err)
-    }
-  }, [])
-
   useEffect(() => {
     fetchProveedores()
   }, [fetchProveedores])
-
-  useEffect(() => {
-    fetchTiposIdentificacion()
-  }, [fetchTiposIdentificacion])
 
   const getProveedor = useCallback(async (id) => {
     setLoading(true)
@@ -69,6 +49,15 @@ export function useProveedores() {
       return null
     } finally {
       setLoading(false)
+    }
+  }, [])
+
+  const verificarRuc = useCallback(async (rucCedula, excludeId = null) => {
+    try {
+      return await verificarRucExistente(rucCedula, excludeId)
+    } catch (err) {
+      console.error('Error al verificar RUC/Cédula:', err)
+      return false
     }
   }, [])
 
@@ -116,21 +105,6 @@ export function useProveedores() {
     }
   }, [fetchProveedores])
 
-  const registrarAbono = useCallback(async (abono) => {
-    setLoading(true)
-    setError(null)
-    try {
-      const result = await createAbono(abono)
-      await fetchCuentasPagar()
-      return result
-    } catch (err) {
-      setError(err.message)
-      throw err
-    } finally {
-      setLoading(false)
-    }
-  }, [fetchCuentasPagar])
-
   return {
     proveedores,
     total,
@@ -138,21 +112,14 @@ export function useProveedores() {
     error,
     page,
     search,
-    tiposIdentificacion,
-    cuentasPagar,
-    cuentasTotal,
-    filtroEstado,
     totalPages: Math.ceil(total / pageSize),
     setPage,
     setSearch,
-    setFiltroEstado,
     fetchProveedores,
-    fetchCuentasPagar,
     getProveedor,
+    verificarRuc,
     crearProveedor,
     editarProveedor,
-    eliminarProveedor,
-    registrarAbono
+    eliminarProveedor
   }
 }
-

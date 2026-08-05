@@ -7,6 +7,7 @@ import DashboardPage from './pages/DashboardPage'
 import ProductosPage from './pages/ProductosPage'
 import VentasPage from './pages/VentasPage'
 import ProveedoresPage from './pages/ProveedoresPage'
+import ClientesPage from './pages/ClientesPage'
 import TallerPage from './pages/TallerPage'
 import CajaPage from './pages/CajaPage'
 import UsuariosPage from './pages/UsuariosPage'
@@ -52,9 +53,14 @@ function AppRoutes() {
             <ProductosPage />
           </ProtectedRoute>
         } />
-        <Route path="/proveedores" element={
+<Route path="/proveedores" element={
           <ProtectedRoute allowedRoles={['Administrador']}>
             <ProveedoresPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/clientes" element={
+          <ProtectedRoute allowedRoles={['Administrador', 'Vendedor']}>
+            <ClientesPage />
           </ProtectedRoute>
         } />
         <Route path="/compras" element={

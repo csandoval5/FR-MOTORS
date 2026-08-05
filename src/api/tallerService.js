@@ -19,9 +19,10 @@ export const getOrdenesTaller = async ({ search = '', estado = '', page = 1, pag
       estados_orden_taller!inner (
         nombre_estado
       ),
-      usuarios!ordenes_taller_id_usuario_solicita_fkey (
-        nombres,
-        apellidos
+usuarios!ordenes_taller_id_usuario_solicita_fkey (
+        id_usuario,
+        nombre_completo,
+        email
       )
     `, { count: 'exact' })
 
@@ -58,15 +59,15 @@ export const getOrdenTallerById = async (id) => {
         id_estado,
         nombre_estado
       ),
-      usuarios!ordenes_taller_id_usuario_solicita_fkey (
+usuarios!ordenes_taller_id_usuario_solicita_fkey (
         id_usuario,
-        nombres,
-        apellidos
+        nombre_completo,
+        email
       ),
       usuarios!ordenes_taller_id_mecánico_asignado_fkey (
         id_usuario,
-        nombres,
-        apellidos
+        nombre_completo,
+        email
       )
     `)
     .eq('id_orden', id)

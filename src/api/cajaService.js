@@ -17,8 +17,8 @@ export const getArqueos = async ({ page = 1, pageSize = 20 } = {}) => {
     .select(`
       *,
       usuarios!arqueo_caja_id_usuario_apertura_fkey (
-        nombres,
-        apellidos
+        nombre_completo,
+        email
       )
     `, { count: 'exact' })
 

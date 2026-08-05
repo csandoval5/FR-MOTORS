@@ -216,7 +216,7 @@ export const getCategorias = async () => {
 export const getProveedoresActivos = async () => {
   const { data, error } = await supabase
     .from('proveedores')
-    .select('id_proveedor, razon_social, numero_identificacion')
+    .select('id_proveedor, razon_social, ruc_cedula')
     .eq('activo', true)
     .order('razon_social', { ascending: true })
 

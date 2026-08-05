@@ -4,11 +4,12 @@ import { supabase } from './supabaseClient'
  * Servicio de Ventas/Facturación para FR MOTORS
  * Punto de Venta (POS), historial de ventas, facturación
  *
- * Columnas de la base de datos:
- * - ventas: id_venta, numero_factura, id_usuario, subtotal, iva, total, forma_pago, estado, creado_en
+* Columnas de la base de datos:
+ * - ventas: id_venta, numero_factura, id_usuario, id_cliente, fecha_venta, subtotal, iva, total, forma_pago, estado, creado_en
  * - detalle_ventas: id_detalle_venta, id_venta, id_producto, cantidad, precio_unitario, subtotal
  * - caja: id_movimiento, tipo_movimiento, concepto, monto, id_usuario, creado_en
  * - productos: id_producto, stock_actual
+ * - clientes: id_cliente, nombre_completo, tipo_identificacion, numero_identificacion, telefono, email, direccion, ciudad, activo, creado_en
  */
 
 const TABLE_VENTAS = 'ventas'
@@ -86,14 +87,20 @@ export const generarNumeroFactura = async () => {
  * Ordena por fecha descending (más recientes primero)
  */
 export const getVentas = async ({ search = '', fechaDesde = '', fechaHasta = '', page = 1, pageSize = 20 } = {}) => {
-  let query = supabase
+let query = supabase
     .from(TABLE_VENTAS)
     .select(`
       *,
       usuarios (
         id_usuario,
-        nombres,
-        apellidos
+        nombre_completo,
+        email
+      ),
+      clientes (
+        id_cliente,
+        nombre_completo,
+        numero_identificacion,
+        telefono
       )
     `, { count: 'exact' })
 
@@ -116,8 +123,26 @@ export const getVentas = async ({ search = '', fechaDesde = '', fechaHasta = '',
     .order('creado_en', { ascending: false })
     .range(from, to)
 
-  if (error) throw new Error(`Error al obtener ventas: ${error.message}`)
-  return { data, total: count, page, pageSize }
+  if (error) {
+    console.error('❌ Error al obtener ventas:', error)
+    // Si el JOIN embebido de usuarios falla (ej. por RLS), reintentar
+    // sin la relación para que el historial al menos cargue las ventas.
+    if (error.code === 'PGRST200' || error.code === '42501' || error.code?.startsWith('PGRST')) {
+      console.warn('⚠️ JOIN de usuarios falló, reintentando sin relación embebida...')
+      const { data: dataSinJoin, error: errorSinJoin, count: countSinJoin } = await supabase
+        .from(TABLE_VENTAS)
+        .select('*', { count: 'exact' })
+        .order('creado_en', { ascending: false })
+        .range(from, to)
+
+      if (errorSinJoin) {
+        throw new Error(`Error al obtener ventas: ${errorSinJoin.message}`)
+      }
+      return { data: dataSinJoin || [], total: countSinJoin || 0, page, pageSize }
+    }
+    throw new Error(`Error al obtener ventas: ${error.message}`)
+  }
+  return { data: data || [], total: count || 0, page, pageSize }
 }
 
 /**
@@ -129,8 +154,8 @@ export const getVentaById = async (id) => {
     .select(`
       *,
       usuarios!inner (
-        nombres,
-        apellidos
+        nombre_completo,
+        email
       )
     `)
     .eq('id_venta', id)

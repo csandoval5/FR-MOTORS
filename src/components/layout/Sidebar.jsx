@@ -14,6 +14,7 @@ import {
   Bike,
   X,
   Truck,
+  UserRound,
   ChevronDown
 } from 'lucide-react'
 import { useState } from 'react'
@@ -48,10 +49,16 @@ export default function Sidebar({ isOpen, onClose }) {
           path: '/pos',
           roles: ['Administrador', 'Vendedor']
         },
-        {
+{
           label: 'Inventario',
           icon: Package,
           path: '/productos',
+          roles: ['Administrador', 'Vendedor']
+        },
+        {
+          label: 'Clientes',
+          icon: UserRound,
+          path: '/clientes',
           roles: ['Administrador', 'Vendedor']
         },
         {

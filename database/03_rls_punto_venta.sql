@@ -62,6 +62,37 @@ CREATE POLICY "usuarios_autenticados_leer_productos"
   USING (true);
 
 -- ============================================================
+-- 10. Políticas para SELECT en usuarios (IMPORTANTE)
+-- Sin estas políticas, el JOIN embebido en el historial de ventas
+-- (`usuarios(...)`) falla con 404/403 y el query completo falla,
+-- mostrando "No hay ventas registradas" aunque existan registros.
+-- ============================================================
+ALTER TABLE usuarios ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "usuarios_leer_autenticados" ON usuarios;
+CREATE POLICY "usuarios_leer_autenticados"
+  ON usuarios FOR SELECT
+  TO authenticated
+  USING (true);
+
+-- ============================================================
+-- 11. Políticas para SELECT en proveedores (para dropdowns)
+-- ============================================================
+ALTER TABLE proveedores ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "proveedores_leer_autenticados" ON proveedores;
+CREATE POLICY "proveedores_leer_autenticados"
+  ON proveedores FOR SELECT
+  TO authenticated
+  USING (true);
+
+DROP POLICY IF EXISTS "proveedores_leer_autenticados_insert" ON proveedores;
+CREATE POLICY "proveedores_leer_autenticados_insert"
+  ON proveedores FOR INSERT
+  TO authenticated
+  WITH CHECK (true);
+
+-- ============================================================
 -- NOTA: Si las políticas ya existen, este script fallará con
 -- "policy already exists". En ese caso, borra las políticas
 -- existentes o usa: DROP POLICY IF EXISTS ...
