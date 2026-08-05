@@ -1,14 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// 👇 Agrega estas líneas
-const repoName = 'FR-MOTORS' // Cambia esto por el nombre exacto de tu repo en GitHub
+const repoName = 'FR-MOTORS'
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [react()],
-  base: `/${repoName}/`, // 👈 Esto es CRÍTICO para GitHub Pages
+  base: mode === 'production' ? `/${repoName}/` : '/',
   server: {
-    port: 5174, // Puerto fijo para evitar problemas de CORS
-    strictPort: true // Falla si el puerto está ocupado
+    port: 5174,
+    strictPort: true
   }
-})
+}))

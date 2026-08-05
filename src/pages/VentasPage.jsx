@@ -46,8 +46,8 @@ export default function VentasPage() {
   const [searchResults, setSearchResults] = useState([])
   const [searching, setSearching] = useState(false)
   const [searchError, setSearchError] = useState('')
-  // id_cliente numérico. Default = 1 (Consumidor Final)
-  const [cliente, setCliente] = useState('1')
+// id_cliente numérico. Default = 11 (Consumidor Final)
+  const [cliente, setCliente] = useState('11')
   const [metodoPago, setMetodoPago] = useState('EFECTIVO')
   const [montoPagado, setMontoPagado] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -189,7 +189,7 @@ export default function VentasPage() {
         value: String(c.id_cliente),
         label: `${c.nombre_completo} ${c.numero_identificacion ? `(${c.numero_identificacion})` : ''}`
       }))
-    : [{ value: '1', label: 'Consumidor Final' }]
+: [{ value: '11', label: 'Consumidor Final' }]
 
   // ====== Crear cliente rápido desde el POS ======
   const handleCrearCliente = async (e) => {
@@ -274,7 +274,7 @@ export default function VentasPage() {
 
       // Limpiar carrito y campos
       setCarrito([])
-      setCliente('1') // Volver a Consumidor Final
+setCliente('11') // Volver a Consumidor Final
       setMontoPagado('')
       setSearchQuery('')
       setSearchResults([])

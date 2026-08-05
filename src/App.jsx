@@ -7,6 +7,7 @@ import DashboardPage from './pages/DashboardPage'
 import ProductosPage from './pages/ProductosPage'
 import VentasPage from './pages/VentasPage'
 import ProveedoresPage from './pages/ProveedoresPage'
+import ComprasPage from './pages/ComprasPage'
 import ClientesPage from './pages/ClientesPage'
 import TallerPage from './pages/TallerPage'
 import CajaPage from './pages/CajaPage'
@@ -63,9 +64,9 @@ function AppRoutes() {
             <ClientesPage />
           </ProtectedRoute>
         } />
-        <Route path="/compras" element={
+<Route path="/compras" element={
           <ProtectedRoute allowedRoles={['Administrador']}>
-            <ProveedoresPage />
+            <ComprasPage />
           </ProtectedRoute>
         } />
         <Route path="/cuentas-pagar" element={

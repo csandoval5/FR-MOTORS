@@ -87,15 +87,16 @@ export const generarNumeroFactura = async () => {
  * Ordena por fecha descending (más recientes primero)
  */
 export const getVentas = async ({ search = '', fechaDesde = '', fechaHasta = '', page = 1, pageSize = 20 } = {}) => {
-let query = supabase
+  // Solo se hace JOIN con `clientes` (necesario para mostrar el nombre del
+  // cliente en el historial). Se ELIMINA el JOIN con `usuarios` porque:
+  //  (a) no se muestra el usuario en la tabla de historial, y
+  //  (b) ese JOIN podía fallar por RLS y disparaba un fallback que también
+  //      descartaba la relación con `clientes`, haciendo que la UI siempre
+  //      mostrara "Consumidor Final".
+  let query = supabase
     .from(TABLE_VENTAS)
     .select(`
       *,
-      usuarios (
-        id_usuario,
-        nombre_completo,
-        email
-      ),
       clientes (
         id_cliente,
         nombre_completo,
@@ -125,21 +126,6 @@ let query = supabase
 
   if (error) {
     console.error('❌ Error al obtener ventas:', error)
-    // Si el JOIN embebido de usuarios falla (ej. por RLS), reintentar
-    // sin la relación para que el historial al menos cargue las ventas.
-    if (error.code === 'PGRST200' || error.code === '42501' || error.code?.startsWith('PGRST')) {
-      console.warn('⚠️ JOIN de usuarios falló, reintentando sin relación embebida...')
-      const { data: dataSinJoin, error: errorSinJoin, count: countSinJoin } = await supabase
-        .from(TABLE_VENTAS)
-        .select('*', { count: 'exact' })
-        .order('creado_en', { ascending: false })
-        .range(from, to)
-
-      if (errorSinJoin) {
-        throw new Error(`Error al obtener ventas: ${errorSinJoin.message}`)
-      }
-      return { data: dataSinJoin || [], total: countSinJoin || 0, page, pageSize }
-    }
     throw new Error(`Error al obtener ventas: ${error.message}`)
   }
   return { data: data || [], total: count || 0, page, pageSize }
@@ -213,13 +199,19 @@ export const createVenta = async ({ venta, detalle, session }) => {
     throw new Error('No se pudo determinar el id_usuario para la venta. Verifica que el usuario esté registrado en la tabla usuarios.')
   }
 
-  // ====== 1. Insertar cabecera de venta ======
+// ====== 1. Insertar cabecera de venta ======
+  // Asegurar que id_cliente tenga un valor válido (FK a clientes).
+  // "Consumidor Final" = id_cliente 11. Si es null/undefined/<=0, usar 11.
+  const idClienteValido = Number(venta.id_cliente) > 0 ? Number(venta.id_cliente) : 11
+
   const ventaData = {
     ...venta,
+    id_cliente: idClienteValido, // Usar el ID de cliente válido (FK)
     id_usuario: idUsuarioNumerico, // Usar el numérico, NO el UUID
     creado_en: new Date().toISOString()
   }
 
+  console.log('🔵 ID Cliente a guardar (id_cliente):', idClienteValido)
   console.log('🔵 Insertando en tabla ventas:', ventaData)
 
   const { data: dataVenta, error: ventaError } = await supabase
